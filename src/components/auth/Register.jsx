@@ -1,6 +1,7 @@
 import React, { useState, useRef } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { useAuth } from '../../contexts/AuthContext'; // Fix the import path
+import { useAuth } from '../../contexts/AuthContext';
+import { FaEnvelope, FaLock, FaUserPlus, FaExclamationTriangle } from 'react-icons/fa';
 
 export default function Register() {
   const emailRef = useRef();
@@ -14,13 +15,8 @@ export default function Register() {
   async function handleSubmit(e) {
     e.preventDefault();
     
-    // Password validation
     if (passwordRef.current.value !== passwordConfirmRef.current.value) {
       return setError('Passwords do not match');
-    }
-    
-    if (passwordRef.current.value.length < 6) {
-      return setError('Password should be at least 6 characters');
     }
     
     try {
@@ -30,12 +26,7 @@ export default function Register() {
       const result = await signup(emailRef.current.value, passwordRef.current.value);
       
       if (result.success) {
-        console.log('Registration successful');
-        if (result.otpSent) {
-          navigate('/verify-otp');
-        } else {
-          setError('Account created but failed to send verification code. Please try again.');
-        }
+        navigate('/verify-otp');
       } else {
         setError(result.error || 'Failed to create an account');
       }
@@ -47,73 +38,115 @@ export default function Register() {
   }
   
   return (
-    <div className="max-w-md mx-auto p-6 bg-white rounded-lg shadow-md">
-      <h2 className="text-2xl font-bold mb-6 text-center">Sign Up</h2>
-      
-      {error && (
-        <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4" role="alert">
-          <span className="block sm:inline">{error}</span>
-        </div>
-      )}
-      
-      <form onSubmit={handleSubmit} className="space-y-4">
-        <div>
-          <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
-            Email Address
-          </label>
-          <input
-            id="email"
-            type="email"
-            ref={emailRef}
-            required
-            className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
-            placeholder="Enter your email"
-          />
+    <div className="auth-page">
+      <div className="auth-card">
+        <div className="auth-header">
+          <h2>Create Your Account</h2>
+          <p>Start journaling your thoughts and experiences</p>
         </div>
         
-        <div>
-          <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">
-            Password
-          </label>
-          <input
-            id="password"
-            type="password"
-            ref={passwordRef}
-            required
-            className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
-            placeholder="Create a password"
-          />
-        </div>
+        {error && (
+          <div className="auth-error">
+            <div className="error-icon">
+              <FaExclamationTriangle />
+            </div>
+            <p>{error}</p>
+          </div>
+        )}
         
-        <div>
-          <label htmlFor="password-confirm" className="block text-sm font-medium text-gray-700 mb-1">
-            Confirm Password
-          </label>
-          <input
-            id="password-confirm"
-            type="password"
-            ref={passwordConfirmRef}
-            required
-            className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
-            placeholder="Confirm your password"
-          />
-        </div>
-        
-        <div>
+        <form onSubmit={handleSubmit} className="auth-form">
+          <div className="form-fields">
+            <div className="form-group">
+              <label htmlFor="email">Email Address</label>
+              <div className="input-with-icon">
+                <span className="input-icon">
+                  <FaEnvelope />
+                </span>
+                <input
+                  id="email"
+                  type="email"
+                  ref={emailRef}
+                  required
+                  placeholder="you@example.com"
+                  autoComplete="email"
+                />
+              </div>
+            </div>
+            
+            <div className="form-group">
+              <label htmlFor="password">Password</label>
+              <div className="input-with-icon">
+                <span className="input-icon">
+                  <FaLock />
+                </span>
+                <input
+                  id="password"
+                  type="password"
+                  ref={passwordRef}
+                  required
+                  placeholder="••••••••"
+                  autoComplete="new-password"
+                />
+              </div>
+              <p className="form-hint">Use 8+ characters with a mix of letters, numbers & symbols</p>
+            </div>
+            
+            <div className="form-group">
+              <label htmlFor="password-confirm">Confirm Password</label>
+              <div className="input-with-icon">
+                <span className="input-icon">
+                  <FaLock />
+                </span>
+                <input
+                  id="password-confirm"
+                  type="password"
+                  ref={passwordConfirmRef}
+                  required
+                  placeholder="••••••••"
+                  autoComplete="new-password"
+                />
+              </div>
+            </div>
+          </div>
+          
+          <div className="form-terms">
+            <div className="remember-me">
+              <input id="terms" type="checkbox" required />
+              <label htmlFor="terms">I agree to the <a href="#" className="terms-link">Terms of Service</a> and <a href="#" className="terms-link">Privacy Policy</a></label>
+            </div>
+          </div>
+          
           <button
             type="submit"
             disabled={loading}
-            className="w-full bg-indigo-600 text-white py-2 px-4 rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50"
+            className="submit-btn"
           >
-            {loading ? 'Signing Up...' : 'Sign Up'}
+            <span className="btn-icon">
+              <FaUserPlus />
+            </span>
+            {loading ? (
+              <div className="loading-state">
+                <svg className="loading-spinner" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                  <circle className="spinner-track" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                  <path className="spinner-path" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+                Creating account...
+              </div>
+            ) : (
+              'Sign up'
+            )}
           </button>
+        </form>
+        
+        <div className="auth-separator">
+          <span>Already have an account?</span>
         </div>
-      </form>
-      
-      <div className="mt-4 text-center">
-        <p className="text-sm text-gray-600">
-          Already have an account? <Link to="/login" className="text-indigo-600 hover:text-indigo-500">Log In</Link>
-        </p>
+        
+        <div className="auth-redirect">
+          <Link to="/login" className="redirect-btn">
+            Sign in instead
+          </Link>
+        </div>
       </div>
     </div>
   );

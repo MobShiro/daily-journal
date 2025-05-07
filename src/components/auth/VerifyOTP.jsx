@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../../contexts/AuthContext'; // Fix the import path
-import { doc, getDoc } from 'firebase/firestore'; // Import Firestore functions directly
-import { db } from '../../firebase'; // Fix the import path
+import { useAuth } from '../../contexts/AuthContext';
+import { FaCheck, FaShieldAlt, FaSyncAlt } from 'react-icons/fa';
 
 export default function VerifyOTP() {
   const [otp, setOtp] = useState('');
@@ -12,27 +11,6 @@ export default function VerifyOTP() {
   const [timeLeft, setTimeLeft] = useState(300); // 5 minutes in seconds
   const { currentUser, verifyOTP, resendOTP, markEmailAsVerified } = useAuth();
   const navigate = useNavigate();
-  
-  // Get current OTP from Firestore for development purposes
-  useEffect(() => {
-    const fetchCurrentOtp = async () => {
-      if (currentUser) {
-        try {
-          const otpDocRef = doc(db, 'otpVerifications', currentUser.uid);
-          const otpDoc = await getDoc(otpDocRef);
-          
-          if (otpDoc.exists()) {
-            const { otp } = otpDoc.data();
-            console.log('Current OTP:', otp); // Only for development
-          }
-        } catch (error) {
-          console.error('Error fetching OTP:', error);
-        }
-      }
-    };
-    
-    fetchCurrentOtp();
-  }, [currentUser]);
   
   // Countdown timer
   useEffect(() => {
@@ -106,64 +84,105 @@ export default function VerifyOTP() {
   }
   
   return (
-    <div className="max-w-md mx-auto p-6 bg-white rounded-lg shadow-md">
-      <h2 className="text-2xl font-bold mb-6 text-center">Verify Your Email</h2>
-      
-      {error && (
-        <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4" role="alert">
-          <span className="block sm:inline">{error}</span>
-        </div>
-      )}
-      
-      {message && (
-        <div className="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-4" role="alert">
-          <span className="block sm:inline">{message}</span>
-        </div>
-      )}
-      
-      <p className="mb-4 text-gray-700">
-        We've sent a verification code to your email address. Please enter it below to verify your account.
-      </p>
-      
-      <form onSubmit={handleSubmit} className="space-y-4">
-        <div>
-          <label htmlFor="otp" className="block text-sm font-medium text-gray-700 mb-1">
-            Verification Code
-          </label>
-          <input
-            type="text"
-            id="otp"
-            value={otp}
-            onChange={(e) => setOtp(e.target.value)}
-            className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
-            placeholder="Enter 6-digit code"
-            maxLength={6}
-            required
-          />
+    <div className="auth-page">
+      <div className="auth-card">
+        <div className="auth-header">
+          <h2>Verify Your Email</h2>
+          <p>Enter the 6-digit code sent to your email</p>
         </div>
         
-        <div>
+        {error && (
+          <div className="auth-error">
+            <div className="error-icon">
+              <svg fill="currentColor" viewBox="0 0 20 20">
+                <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-9v4a1 1 0 11-2 0v-4a1 1 0 112 0zm-1-5a1 1 0 100 2 1 1 0 000-2z" clipRule="evenodd" />
+              </svg>
+            </div>
+            <p>{error}</p>
+          </div>
+        )}
+        
+        {message && (
+          <div className="auth-success">
+            <div className="success-icon">
+              <svg fill="currentColor" viewBox="0 0 20 20">
+                <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+              </svg>
+            </div>
+            <p>{message}</p>
+          </div>
+        )}
+        
+        <div className="otp-verification-content">
+          <div className="otp-icon">
+            <FaShieldAlt size={48} />
+          </div>
+          
+          <p className="otp-info">
+            We've sent a verification code to:<br />
+            <strong>{currentUser?.email}</strong>
+          </p>
+        </div>
+        
+        <form onSubmit={handleSubmit} className="auth-form">
+          <div className="form-fields">
+            <div className="form-group">
+              <label htmlFor="otp">Verification Code</label>
+              <div className="input-with-icon otp-input-wrapper">
+                <span className="input-icon">
+                  <FaCheck />
+                </span>
+                <input
+                  id="otp"
+                  type="text"
+                  value={otp}
+                  onChange={(e) => setOtp(e.target.value)}
+                  placeholder="Enter 6-digit code"
+                  maxLength={6}
+                  required
+                  className="otp-input"
+                />
+              </div>
+            </div>
+          </div>
+          
+          <div className="timer-display">
+            {timeLeft > 0 ? (
+              <p className="timer">Code expires in: {formatTime(timeLeft)}</p>
+            ) : (
+              <p className="timer expired">Code expired</p>
+            )}
+          </div>
+          
           <button
             type="submit"
             disabled={loading}
-            className="w-full bg-indigo-600 text-white py-2 px-4 rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50"
+            className="submit-btn"
           >
-            {loading ? 'Verifying...' : 'Verify Email'}
+            {loading ? (
+              <div className="loading-state">
+                <svg className="loading-spinner" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                  <circle className="spinner-track" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                  <path className="spinner-path" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+                Verifying...
+              </div>
+            ) : (
+              'Verify Code'
+            )}
+          </button>
+        </form>
+        
+        <div className="resend-code">
+          <button 
+            onClick={handleResendOTP} 
+            disabled={loading || timeLeft > 0} 
+            className="resend-btn"
+          >
+            <FaSyncAlt className="mr-2" /> 
+            {timeLeft > 0 ? `Resend code in ${formatTime(timeLeft)}` : 'Resend verification code'}
           </button>
         </div>
-      </form>
-      
-      <div className="mt-6 text-center">
-        <p className="text-sm text-gray-600 mb-2">
-          Didn't receive the code? {timeLeft > 0 ? `Resend in ${formatTime(timeLeft)}` : ''}
-        </p>
-        <button
-          onClick={handleResendOTP}
-          disabled={loading || timeLeft > 0}
-          className="text-indigo-600 hover:text-indigo-800 text-sm font-medium disabled:opacity-50"
-        >
-          Resend Code
-        </button>
       </div>
     </div>
   );

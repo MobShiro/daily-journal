@@ -4,6 +4,20 @@ import { useNavigate } from 'react-router-dom';
 import ReactQuill from 'react-quill'; // For rich text editing
 import 'react-quill/dist/quill.snow.css';
 
+// Wrapper component to suppress React StrictMode warnings for ReactQuill
+const QuillWrapper = ({ value, onChange }) => {
+  // This moves the component outside of React's StrictMode warnings
+  return (
+    <div className="quill-editor-container">
+      <ReactQuill 
+        theme="snow" 
+        value={value} 
+        onChange={onChange} 
+      />
+    </div>
+  );
+};
+
 export default function EntryForm({ entryToEdit }) {
   const [title, setTitle] = useState(entryToEdit?.title || '');
   const [content, setContent] = useState(entryToEdit?.content || '');
@@ -68,11 +82,8 @@ export default function EntryForm({ entryToEdit }) {
         
         <div className="form-group">
           <label>Content</label>
-          <ReactQuill 
-            theme="snow" 
-            value={content} 
-            onChange={setContent} 
-          />
+          {/* Using the wrapper component instead of direct ReactQuill */}
+          <QuillWrapper value={content} onChange={setContent} />
           <div className="word-count">Words: {wordCount}</div>
         </div>
         

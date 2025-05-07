@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
+import { JournalProvider } from './contexts/JournalContext';
+import { ThemeProvider } from './contexts/ThemeContext';
 import { doc, getDoc } from 'firebase/firestore';
 import { db } from './firebase';
 
@@ -11,6 +13,16 @@ import Register from './components/auth/Register';
 import VerifyOTP from './components/auth/VerifyOTP';
 import ResetPassword from './components/auth/ResetPassword';
 import NotFound from './components/NotFound';
+import Layout from './components/ui/Layout';
+import ForgotPassword from './components/auth/ForgotPassword';
+import EntryList from './components/journal/EntryList';
+import EntryView from './components/journal/EntryView';
+import EntryForm from './components/journal/EntryForm';
+import EditEntry from './components/journal/EditEntry';
+import Profile from './components/Profile';
+import Homepage from './components/Homepage';
+
+import './styles/main.css';
 
 // Protected route component
 const ProtectedRoute = ({ children }) => {
@@ -74,40 +86,103 @@ function App() {
   return (
     <Router>
       <AuthProvider>
-        <Routes>
-          {/* Public routes */}
-          <Route path="/login" element={<Login />} />
-          <Route path="/register" element={<Register />} />
-          <Route path="/reset-password" element={<ResetPassword />} />
-          
-          {/* Protected routes */}
-          <Route 
-            path="/verify-otp" 
-            element={
-              <ProtectedRoute>
-                <VerifyOTP />
-              </ProtectedRoute>
-            } 
-          />
-          
-          <Route 
-            path="/dashboard" 
-            element={
-              <EmailVerifiedRoute>
-                <Dashboard />
-              </EmailVerifiedRoute>
-            } 
-          />
-          
-          {/* Home route */}
-          <Route path="/" element={<Navigate to="/login" replace />} />
-          
-          {/* 404 route */}
-          <Route path="*" element={<NotFound />} />
-        </Routes>
+        <ThemeProvider>
+          <JournalProvider>
+            <Routes>
+              {/* Public routes */}
+              <Route path="/login" element={<Login />} />
+              <Route path="/register" element={<Register />} />
+              <Route path="/reset-password" element={<ResetPassword />} />
+              <Route path="/forgot-password" element={<ForgotPassword />} />
+              
+              {/* Homepage */}
+              <Route path="/" element={<Homepage />} />
+              
+              {/* Protected routes */}
+              <Route 
+                path="/verify-otp" 
+                element={
+                  <ProtectedRoute>
+                    <VerifyOTP />
+                  </ProtectedRoute>
+                } 
+              />
+              
+              {/* Routes requiring email verification */}
+              <Route 
+                path="/dashboard" 
+                element={
+                  <EmailVerifiedRoute>
+                    <Layout>
+                      <Dashboard />
+                    </Layout>
+                  </EmailVerifiedRoute>
+                } 
+              />
+              
+              <Route 
+                path="/entries" 
+                element={
+                  <EmailVerifiedRoute>
+                    <Layout>
+                      <EntryList />
+                    </Layout>
+                  </EmailVerifiedRoute>
+                } 
+              />
+              
+              <Route 
+                path="/entry/:id" 
+                element={
+                  <EmailVerifiedRoute>
+                    <Layout>
+                      <EntryView />
+                    </Layout>
+                  </EmailVerifiedRoute>
+                } 
+              />
+              
+              <Route 
+                path="/new-entry" 
+                element={
+                  <EmailVerifiedRoute>
+                    <Layout>
+                      <EntryForm />
+                    </Layout>
+                  </EmailVerifiedRoute>
+                } 
+              />
+              
+              <Route 
+                path="/edit-entry/:id" 
+                element={
+                  <EmailVerifiedRoute>
+                    <Layout>
+                      <EditEntry />
+                    </Layout>
+                  </EmailVerifiedRoute>
+                } 
+              />
+              
+              <Route 
+                path="/profile" 
+                element={
+                  <EmailVerifiedRoute>
+                    <Layout>
+                      <Profile />
+                    </Layout>
+                  </EmailVerifiedRoute>
+                } 
+              />
+              
+              {/* 404 route */}
+              <Route path="*" element={<NotFound />} />
+            </Routes>
+          </JournalProvider>
+        </ThemeProvider>
       </AuthProvider>
     </Router>
   );
 }
 
-export default App; 
+export default App;

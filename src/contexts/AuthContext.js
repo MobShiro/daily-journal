@@ -4,7 +4,10 @@ import {
   signInWithEmailAndPassword,
   onAuthStateChanged,
   signOut,
-  sendPasswordResetEmail
+  sendPasswordResetEmail,
+  sendEmailVerification,
+  deleteUser,
+  updateProfile
 } from 'firebase/auth';
 import { 
   doc, 
@@ -211,7 +214,29 @@ export function AuthProvider({ children }) {
       return { success: true, user: userCredential.user };
     } catch (error) {
       console.error('Error logging in:', error);
-      return { success: false, error: error.message };
+      
+      // Provide more user-friendly error messages
+      let errorMessage;
+      switch(error.code) {
+        case 'auth/invalid-credential':
+        case 'auth/user-not-found':
+        case 'auth/wrong-password':
+          errorMessage = 'Invalid email or password. Please check your credentials and try again.';
+          break;
+        case 'auth/user-disabled':
+          errorMessage = 'This account has been disabled. Please contact support.';
+          break;
+        case 'auth/too-many-requests':
+          errorMessage = 'Too many unsuccessful login attempts. Please try again later or reset your password.';
+          break;
+        case 'auth/network-request-failed':
+          errorMessage = 'Network error. Please check your internet connection and try again.';
+          break;
+        default:
+          errorMessage = error.message || 'An error occurred during login. Please try again.';
+      }
+      
+      return { success: false, error: errorMessage, code: error.code };
     }
   }
   
@@ -244,6 +269,64 @@ export function AuthProvider({ children }) {
       return { success: false, error: error.message };
     }
   }
+
+  // Send verification email
+  async function sendVerificationEmail() {
+    try {
+      if (currentUser && !currentUser.emailVerified) {
+        await sendEmailVerification(currentUser);
+        return { success: true };
+      } else {
+        return { success: false, error: 'User already verified or not logged in' };
+      }
+    } catch (error) {
+      console.error('Error sending verification email:', error);
+      return { success: false, error: error.message };
+    }
+  }
+
+  // Update user profile
+  async function updateUserProfile(displayName, photoURL) {
+    try {
+      if (!currentUser) {
+        return { success: false, error: 'No user is logged in' };
+      }
+      
+      const updates = {};
+      if (displayName) updates.displayName = displayName;
+      if (photoURL) updates.photoURL = photoURL;
+      
+      await updateProfile(currentUser, updates);
+      
+      // Update the user document in Firestore
+      await updateDoc(doc(db, 'users', currentUser.uid), {
+        ...displayName && { displayName },
+        ...photoURL && { photoURL },
+        updatedAt: serverTimestamp()
+      });
+      
+      return { success: true };
+    } catch (error) {
+      console.error('Error updating profile:', error);
+      return { success: false, error: error.message };
+    }
+  }
+  
+  // Delete user account
+  async function deleteUserAccount() {
+    try {
+      if (!currentUser) {
+        return { success: false, error: 'No user is logged in' };
+      }
+      
+      // Delete user from Firebase Auth
+      await deleteUser(currentUser);
+      return { success: true };
+    } catch (error) {
+      console.error('Error deleting user account:', error);
+      return { success: false, error: error.message };
+    }
+  }
   
   // Auth state change listener
   useEffect(() => {
@@ -264,7 +347,10 @@ export function AuthProvider({ children }) {
     createOtpVerification,
     verifyOTP,
     resendOTP,
-    markEmailAsVerified
+    markEmailAsVerified,
+    sendVerificationEmail,
+    updateUserProfile,
+    deleteUserAccount
   };
   
   return (

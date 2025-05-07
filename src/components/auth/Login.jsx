@@ -1,6 +1,7 @@
 import React, { useState, useRef } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { useAuth } from '../../contexts/AuthContext'; // Fix the import path
+import { useAuth } from '../../contexts/AuthContext';
+import { FaEnvelope, FaLock, FaSignInAlt, FaExclamationTriangle } from 'react-icons/fa';
 
 export default function Login() {
   const emailRef = useRef();
@@ -20,78 +21,113 @@ export default function Login() {
       const result = await login(emailRef.current.value, passwordRef.current.value);
       
       if (result.success) {
-        // Redirect to dashboard or check if email verification is needed
         navigate('/dashboard');
       } else {
         setError(result.error || 'Failed to log in');
       }
     } catch (error) {
-      setError('Failed to log in: ' + error.message);
+      console.error('Error in login component:', error);
+      setError('An unexpected error occurred. Please try again later.');
     } finally {
       setLoading(false);
     }
   }
   
   return (
-    <div className="max-w-md mx-auto p-6 bg-white rounded-lg shadow-md">
-      <h2 className="text-2xl font-bold mb-6 text-center">Log In</h2>
-      
-      {error && (
-        <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4" role="alert">
-          <span className="block sm:inline">{error}</span>
-        </div>
-      )}
-      
-      <form onSubmit={handleSubmit} className="space-y-4">
-        <div>
-          <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
-            Email Address
-          </label>
-          <input
-            id="email"
-            type="email"
-            ref={emailRef}
-            required
-            className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
-            placeholder="Enter your email"
-          />
+    <div className="auth-page">
+      <div className="auth-card login-card">
+        <div className="auth-header">
+          <h2>Welcome Back</h2>
+          <p>Sign in to continue to your journal</p>
         </div>
         
-        <div>
-          <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">
-            Password
-          </label>
-          <input
-            id="password"
-            type="password"
-            ref={passwordRef}
-            required
-            className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
-            placeholder="Enter your password"
-          />
-        </div>
+        {error && (
+          <div className="auth-error">
+            <div className="error-icon">
+              <FaExclamationTriangle />
+            </div>
+            <p>{error}</p>
+          </div>
+        )}
         
-        <div className="text-right">
-          <Link to="/reset-password" className="text-sm text-indigo-600 hover:text-indigo-500">
-            Forgot Password?
-          </Link>
-        </div>
-        
-        <div>
+        <form onSubmit={handleSubmit} className="auth-form">
+          <div className="form-fields">
+            <div className="form-group">
+              <label htmlFor="email">Email Address</label>
+              <div className="input-with-icon">
+                <span className="input-icon">
+                  <FaEnvelope />
+                </span>
+                <input
+                  id="email"
+                  type="email"
+                  ref={emailRef}
+                  required
+                  placeholder="you@example.com"
+                  autoComplete="email"
+                />
+              </div>
+            </div>
+            
+            <div className="form-group">
+              <label htmlFor="password">Password</label>
+              <div className="input-with-icon">
+                <span className="input-icon">
+                  <FaLock />
+                </span>
+                <input
+                  id="password"
+                  type="password"
+                  ref={passwordRef}
+                  required
+                  placeholder="••••••••"
+                  autoComplete="current-password"
+                />
+              </div>
+            </div>
+          </div>
+
+          <div className="form-options">
+            <div className="remember-me">
+              <input id="remember-me" type="checkbox" />
+              <label htmlFor="remember-me">Remember me</label>
+            </div>
+            <Link to="/forgot-password" className="forgot-password">
+              Forgot password?
+            </Link>
+          </div>
+          
           <button
             type="submit"
             disabled={loading}
-            className="w-full bg-indigo-600 text-white py-2 px-4 rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50"
+            className="submit-btn"
           >
-            {loading ? 'Logging in...' : 'Log In'}
+            <span className="btn-icon">
+              <FaSignInAlt />
+            </span>
+            {loading ? (
+              <div className="loading-state">
+                <svg className="loading-spinner" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                  <circle className="spinner-track" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                  <path className="spinner-path" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+                Signing in...
+              </div>
+            ) : (
+              'Sign in'
+            )}
           </button>
+        </form>
+        
+        <div className="auth-separator">
+          <span>New to Daily Journal?</span>
         </div>
-      </form>
-      
-      <div className="mt-4 text-center">
-        <p className="text-sm text-gray-600">
-          Don't have an account? <Link to="/register" className="text-indigo-600 hover:text-indigo-500">Sign Up</Link>
-        </p>
+        
+        <div className="auth-redirect">
+          <Link to="/register" className="redirect-btn">
+            Create an account
+          </Link>
+        </div>
       </div>
     </div>
   );
