@@ -18,7 +18,7 @@ const otpEmailTemplate = (otp) => `
 module.exports = async (req, res) => {
   // Set CORS headers
   res.setHeader('Access-Control-Allow-Credentials', true);
-  res.setHeader('Access-Control-Allow-Origin', '*'); // Update this with your Vercel domain
+  res.setHeader('Access-Control-Allow-Origin', process.env.NODE_ENV === 'production' ? 'https://daily-journal.vercel.app' : '*');
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version');
 
@@ -35,7 +35,11 @@ module.exports = async (req, res) => {
   try {
     const { email, otp, userId } = req.body;
     
+    // Log request details (without sensitive data)
+    console.log(`[${new Date().toISOString()}] OTP email request received for: ${email}`);
+    
     if (!email || !otp) {
+      console.error('Missing required fields: email or OTP');
       return res.status(400).json({ 
         success: false, 
         message: 'Email and OTP are required' 
@@ -46,12 +50,10 @@ module.exports = async (req, res) => {
     const emailUser = process.env.EMAIL_USER;
     const emailPass = process.env.EMAIL_APP_PASSWORD; // Use app password instead of normal password
     
-    console.log('Email configuration:', { 
-      hasUser: !!emailUser,
-      hasPass: !!emailPass
-    });
+    console.log(`[${new Date().toISOString()}] Email configuration check: User ${emailUser ? 'exists' : 'missing'}, Password ${emailPass ? 'exists' : 'missing'}`);
     
     if (!emailUser || !emailPass) {
+      console.error('Missing email configuration environment variables');
       return res.status(500).json({
         success: false,
         message: 'Email configuration is missing. Please check environment variables.'
@@ -60,12 +62,17 @@ module.exports = async (req, res) => {
     
     // Email transporter configuration using app password
     const transporter = nodemailer.createTransport({
+      service: 'gmail',
       host: 'smtp.gmail.com',
-      port: 465,
-      secure: true, // use SSL
+      port: 587,
+      secure: false, // Use TLS
       auth: {
         user: emailUser,
         pass: emailPass
+      },
+      tls: {
+        // Do not fail on invalid certs
+        rejectUnauthorized: false
       }
     });
     

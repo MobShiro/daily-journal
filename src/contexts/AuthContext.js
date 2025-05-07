@@ -30,7 +30,7 @@ export function AuthProvider({ children }) {
   
   // API URL - change this to your deployed API URL in production
   const API_URL = process.env.NODE_ENV === 'production' 
-  ? 'https://your-deployed-api-url.com' // Change to your deployed API URL
+  ? 'https://daily-journal.vercel.app' // Updated to Vercel deployment URL
   : 'http://localhost:3001';
   
   // Generate a 6-digit OTP code
