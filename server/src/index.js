@@ -17,8 +17,8 @@ app.use(cors({
 const transporter = nodemailer.createTransport({
   service: 'gmail',
   auth: {
-    user: 'bmamao177@gmail.com',
-    pass: process.env.GMAIL_PASSWORD // Store in .env file
+    user: process.env.EMAIL_USER,
+    pass: process.env.EMAIL_PASSWORD
   }
 });
 

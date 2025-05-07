@@ -17,7 +17,7 @@ export default function EntryView() {
     async function fetchEntry() {
       try {
         const entryDoc = await getEntry(id);
-        if (entryDoc.exists) {
+        if (entryDoc.exists()) { // Fixed - exists is a function, not a property
           setEntry({
             id: entryDoc.id,
             ...entryDoc.data()

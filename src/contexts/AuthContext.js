@@ -26,8 +26,10 @@ export function AuthProvider({ children }) {
   const [loading, setLoading] = useState(true);
   
   // API URL - change this to your deployed API URL in production
-  const API_URL = 'http://localhost:3001';
-
+  const API_URL = process.env.NODE_ENV === 'production' 
+  ? 'https://your-deployed-api-url.com' // Change to your deployed API URL
+  : 'http://localhost:3001';
+  
   // Generate a 6-digit OTP code
   function generateOTP() {
     return Math.floor(100000 + Math.random() * 900000).toString();
