@@ -42,18 +42,36 @@ module.exports = async (req, res) => {
       });
     }
     
-    // Email transporter configuration
+    // Get email configuration from environment variables
+    const emailUser = process.env.EMAIL_USER;
+    const emailPass = process.env.EMAIL_APP_PASSWORD; // Use app password instead of normal password
+    
+    console.log('Email configuration:', { 
+      hasUser: !!emailUser,
+      hasPass: !!emailPass
+    });
+    
+    if (!emailUser || !emailPass) {
+      return res.status(500).json({
+        success: false,
+        message: 'Email configuration is missing. Please check environment variables.'
+      });
+    }
+    
+    // Email transporter configuration using app password
     const transporter = nodemailer.createTransport({
-      service: 'gmail',
+      host: 'smtp.gmail.com',
+      port: 465,
+      secure: true, // use SSL
       auth: {
-        user: process.env.EMAIL_USER || 'bmamao177@gmail.com',
-        pass: process.env.EMAIL_PASSWORD || process.env.GMAIL_PASSWORD
+        user: emailUser,
+        pass: emailPass
       }
     });
     
     // Email content
     const mailOptions = {
-      from: '"Daily Journal" <bmamao177@gmail.com>',
+      from: `"Daily Journal" <${emailUser}>`,
       to: email,
       subject: 'Your Verification Code for Daily Journal',
       text: `Your verification code is: ${otp}`,
