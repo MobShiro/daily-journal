@@ -1,0 +1,70 @@
+[debug] [2025-05-07T03:10:08.311Z] ----------------------------------------------------------------------
+[debug] [2025-05-07T03:10:08.314Z] Command:       D:\NodeJS\node.exe C:\Users\Shiro\AppData\Roaming\npm\node_modules\firebase-tools\lib\bin\firebase.js functions:shell
+[debug] [2025-05-07T03:10:08.315Z] CLI Version:   14.2.2
+[debug] [2025-05-07T03:10:08.315Z] Platform:      win32
+[debug] [2025-05-07T03:10:08.315Z] Node Version:  v22.15.0
+[debug] [2025-05-07T03:10:08.315Z] Time:          Wed May 07 2025 11:10:08 GMT+0800 (Philippine Standard Time)
+[debug] [2025-05-07T03:10:08.316Z] ----------------------------------------------------------------------
+[debug] 
+[debug] [2025-05-07T03:10:08.614Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2025-05-07T03:10:08.614Z] > authorizing via signed-in user (mlrodriguez@paterostechnologicalcollege.edu.ph)
+[debug] [2025-05-07T03:10:08.614Z] [iam] checking project daily-journal-fc04c for permissions ["firebase.projects.get"]
+[debug] [2025-05-07T03:10:08.616Z] Checked if tokens are valid: true, expires at: 1746590341880
+[debug] [2025-05-07T03:10:08.616Z] Checked if tokens are valid: true, expires at: 1746590341880
+[debug] [2025-05-07T03:10:08.618Z] >>> [apiv2][query] POST https://cloudresourcemanager.googleapis.com/v1/projects/daily-journal-fc04c:testIamPermissions [none]
+[debug] [2025-05-07T03:10:08.618Z] >>> [apiv2][(partial)header] POST https://cloudresourcemanager.googleapis.com/v1/projects/daily-journal-fc04c:testIamPermissions x-goog-quota-user=projects/daily-journal-fc04c
+[debug] [2025-05-07T03:10:08.618Z] >>> [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects/daily-journal-fc04c:testIamPermissions {"permissions":["firebase.projects.get"]}
+[debug] [2025-05-07T03:10:09.632Z] <<< [apiv2][status] POST https://cloudresourcemanager.googleapis.com/v1/projects/daily-journal-fc04c:testIamPermissions 200
+[debug] [2025-05-07T03:10:09.632Z] <<< [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects/daily-journal-fc04c:testIamPermissions {"permissions":["firebase.projects.get"]}
+[debug] [2025-05-07T03:10:09.636Z] [functions] Functions Emulator only supports listening on one address (127.0.0.1). Not listening on ::1
+[debug] [2025-05-07T03:10:09.650Z] defaultcredentials: writing to file C:\Users\Shiro\AppData\Roaming\firebase\mlrodriguez_paterostechnologicalcollege_edu.ph_application_default_credentials.json
+[debug] [2025-05-07T03:10:09.652Z] DEBUG: Setting GAC to C:\Users\Shiro\AppData\Roaming\firebase\mlrodriguez_paterostechnologicalcollege_edu.ph_application_default_credentials.json
+[debug] [2025-05-07T03:10:09.652Z] Checked if tokens are valid: true, expires at: 1746590341880
+[debug] [2025-05-07T03:10:09.652Z] Checked if tokens are valid: true, expires at: 1746590341880
+[debug] [2025-05-07T03:10:09.652Z] >>> [apiv2][query] GET https://firebase.googleapis.com/v1beta1/projects/daily-journal-fc04c/adminSdkConfig [none]
+[debug] [2025-05-07T03:10:10.456Z] <<< [apiv2][status] GET https://firebase.googleapis.com/v1beta1/projects/daily-journal-fc04c/adminSdkConfig 200
+[debug] [2025-05-07T03:10:10.456Z] <<< [apiv2][body] GET https://firebase.googleapis.com/v1beta1/projects/daily-journal-fc04c/adminSdkConfig {"projectId":"daily-journal-fc04c","storageBucket":"daily-journal-fc04c.firebasestorage.app"}
+[debug] [2025-05-07T03:10:10.476Z] [functions] Watching "C:\Users\Shiro\Desktop\DAILY-JOURNAL\daily-journal\functions" for Cloud Functions...
+[debug] [2025-05-07T03:10:10.480Z] Validating nodejs source
+[warn] !  functions: package.json indicates an outdated version of firebase-functions. Please upgrade using npm install --save firebase-functions@latest in your functions directory. 
+[warn] !  functions: Please note that there will be breaking changes when you upgrade. 
+[debug] [2025-05-07T03:10:11.385Z] > [functions] package.json contents: {
+  "name": "functions",
+  "description": "Cloud Functions for Firebase",
+  "scripts": {
+    "serve": "firebase emulators:start --only functions",
+    "shell": "firebase functions:shell",
+    "start": "npm run shell",
+    "deploy": "firebase deploy --only functions",
+    "logs": "firebase functions:log"
+  },
+  "engines": {
+    "node": "22"
+  },
+  "main": "index.js",
+  "dependencies": {
+    "dotenv": "^16.5.0",
+    "firebase-admin": "^11.8.0",
+    "firebase-functions": "^4.3.1",
+    "nodemailer": "^6.9.3"
+  },
+  "private": true
+}
+[debug] [2025-05-07T03:10:11.385Z] Building nodejs source
+[debug] [2025-05-07T03:10:11.386Z] Failed to find version of module node: reached end of search path C:\Users\Shiro\Desktop\DAILY-JOURNAL\daily-journal\functions\node_modules
+[info] +  functions: Using node@22 from host. 
+[info] i  functions: Loaded environment variables from .env.local. 
+[info] i  functions: You are using a version of firebase-functions SDK (4.3.1) that does not have support for the newest Firebase Extensions features. Please update firebase-functions SDK to >=5.1.0 to use them correctly 
+[debug] [2025-05-07T03:10:11.390Z] Could not find functions.yaml. Must use http discovery
+[debug] [2025-05-07T03:10:11.398Z] Found firebase-functions binary at 'C:\Users\Shiro\Desktop\DAILY-JOURNAL\daily-journal\functions\node_modules\.bin\firebase-functions'
+[info] Serving at port 8528
+
+[debug] [2025-05-07T03:10:12.105Z] Got response from /__/functions.yaml {"endpoints":{"hello":{"platform":"gcfv1","availableMemoryMb":null,"timeoutSeconds":null,"minInstances":null,"maxInstances":null,"ingressSettings":null,"serviceAccountEmail":null,"vpc":null,"httpsTrigger":{},"entryPoint":"hello"},"sendTestEmail":{"platform":"gcfv1","availableMemoryMb":null,"timeoutSeconds":null,"minInstances":null,"maxInstances":null,"ingressSettings":null,"serviceAccountEmail":null,"vpc":null,"httpsTrigger":{},"entryPoint":"sendTestEmail"},"sendOTPEmail":{"platform":"gcfv1","availableMemoryMb":null,"timeoutSeconds":null,"minInstances":null,"maxInstances":null,"ingressSettings":null,"serviceAccountEmail":null,"vpc":null,"eventTrigger":{"eventType":"providers/cloud.firestore/eventTypes/document.create","eventFilters":{"resource":"projects/daily-journal-fc04c/databases/(default)/documents/otpVerifications/{userId}"},"retry":false},"labels":{},"entryPoint":"sendOTPEmail"}},"specVersion":"v1alpha1","requiredAPIs":[]}
+[info] shutdown requested via /__/quitquitquit
+
+[debug] [2025-05-07T03:10:16.158Z] [functions] Loaded functions definitions from source: hello, sendTestEmail, sendOTPEmail.
+[debug] [2025-05-07T03:10:16.159Z] [functions[us-central1-hello]] http function initialized (http://127.0.0.1:5000/daily-journal-fc04c/us-central1/hello).
+[debug] [2025-05-07T03:10:16.159Z] [functions[us-central1-sendTestEmail]] http function initialized (http://127.0.0.1:5000/daily-journal-fc04c/us-central1/sendTestEmail).
+[debug] [2025-05-07T03:10:16.159Z] [functions[us-central1-sendOTPEmail]] function ignored because the firestore emulator does not exist or is not running.
+[info] i  functions: Loaded functions: hello, sendTestEmail, sendOTPEmail 
+[warn] !  functions: The following emulators are not running, calls to these services will affect production: firestore, database, pubsub, storage, eventarc, tasks 
