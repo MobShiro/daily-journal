@@ -18,7 +18,7 @@ const otpEmailTemplate = (otp) => `
 module.exports = async (req, res) => {
   // Set CORS headers
   res.setHeader('Access-Control-Allow-Credentials', true);
-  res.setHeader('Access-Control-Allow-Origin', process.env.NODE_ENV === 'production' ? 'https://daily-journal.vercel.app' : '*');
+  res.setHeader('Access-Control-Allow-Origin', 'https://daily-journal-nu-swart.vercel.app');
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version');
 
